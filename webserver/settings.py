@@ -27,7 +27,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'my8fin=ap)&z7)@4=6_2t_%!d*^eb_
 # DEBUG = True
 DEBUG = os.environ.get('DJANGO_DEBUG', '') != 'False'
 
-ALLOWED_HOSTS = ['intense-river-70224.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['intense-river-70224.herokuapp.com', 'localhost', '127.0.0.1']
 
 
 # Application definition

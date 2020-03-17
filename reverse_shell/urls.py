@@ -10,6 +10,7 @@ router.register(r'victims', VictimViewSet)
 app_name = 'reverse_shell'
 urlpatterns = [
     path('', HomeViewSet.as_view(), name='index'),
+    url(r'^signup/', SignupView.as_view(), name='signup'),
     url(r'^api/', include(router.urls)),
 ]
 

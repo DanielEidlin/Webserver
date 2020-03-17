@@ -1,16 +1,31 @@
 from django.views import View
 from rest_framework import viewsets
+from django.urls import reverse_lazy
 from django.http import HttpResponse
 from .models import Attacker, Victim
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.shortcuts import get_object_or_404
+from django.views.generic.edit import FormView
+from django.contrib.auth.forms import UserCreationForm
 from .serializers import AttackerSerializer, VictimSerializer
 
 
 class HomeViewSet(View):
     def get(self, request):
         return HttpResponse("Hello, world. You're at the ReverseShell's index.")
+
+
+class SignupView(FormView):
+    template_name = 'signup.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('reverse_shell:index')
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.save()
+        return super().form_valid(form)
 
 
 class AttackerViewSet(viewsets.ModelViewSet):
