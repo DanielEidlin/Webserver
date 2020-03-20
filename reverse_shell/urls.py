@@ -12,7 +12,7 @@ app_name = 'reverse_shell'
 urlpatterns = [
     path('', HomeViewSet.as_view(), name='index'),
     path('accounts/', include('django.contrib.auth.urls')),
-    url(r'^signup/', SignupView.as_view(), name='signup'),
+    url(r'^register/', RegisterView.as_view(), name='signup'),
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^api/', include(router.urls)),
