@@ -7,11 +7,11 @@ from django.contrib.auth.views import LoginView, LogoutView
 router = DefaultRouter()
 router.register(r'attackers', AttackerViewSet)
 router.register(r'victims', VictimViewSet)
+router.register(r'users', UserViewSet)
 
 app_name = 'reverse_shell'
 urlpatterns = [
     path('', HomeViewSet.as_view(), name='index'),
-    path('accounts/', include('django.contrib.auth.urls')),
     url(r'^register/', RegisterView.as_view(), name='signup'),
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
