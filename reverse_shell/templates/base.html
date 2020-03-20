@@ -7,6 +7,11 @@
   <body>
     <header>
       <h1>ReverseShell</h1>
+      {% if user.is_authenticated %}
+        <a href="{% url 'reverse_shell:logout' %}">logout</a>
+      {% else %}
+        <a href="{% url 'reverse_shell:login' %}">login</a> / <a href="{% url 'reverse_shell:signup' %}">signup</a>
+      {% endif %}
       <hr>
     </header>
     <main>
