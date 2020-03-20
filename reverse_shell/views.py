@@ -1,7 +1,6 @@
 from django.views import View
 from rest_framework import viewsets
 from django.urls import reverse_lazy
-from django.http import HttpResponse
 from .models import Attacker, Victim
 from rest_framework.response import Response
 from rest_framework.decorators import action
