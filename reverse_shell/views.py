@@ -1,16 +1,17 @@
 from django.views import View
-from rest_framework import viewsets
 from django.urls import reverse_lazy
 from .models import Attacker, Victim
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.views.generic.edit import FormView
+from rest_framework import viewsets, permissions
 from django.contrib.auth.forms import UserCreationForm
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.mixins import LoginRequiredMixin
 from .serializers import AttackerSerializer, VictimSerializer
 
 
-class HomeViewSet(View):
+class HomeViewSet(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, 'index.html')
 
@@ -33,6 +34,7 @@ class AttackerViewSet(viewsets.ModelViewSet):
     """
     queryset = Attacker.objects.all()
     serializer_class = AttackerSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=['get'])
     def get_attacker(self, request):
@@ -52,6 +54,7 @@ class VictimViewSet(viewsets.ModelViewSet):
     """
     queryset = Victim.objects.all()
     serializer_class = VictimSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
     @action(detail=False, methods=['get'])
     def available_victims(self):
