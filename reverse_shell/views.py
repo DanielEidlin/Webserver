@@ -1,16 +1,33 @@
+from .serializers import *
 from django.views import View
-from rest_framework import viewsets
-from django.http import HttpResponse
+from django.urls import reverse_lazy
 from .models import Attacker, Victim
+from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import action
-from django.shortcuts import get_object_or_404
-from .serializers import AttackerSerializer, VictimSerializer
+from django.views.generic.edit import FormView
+from rest_framework import viewsets, permissions
+from django.contrib.auth.forms import UserCreationForm
+from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from reverse_shell.permissions import IsOwnerOrReadOnly, IsOwnerOrVictim
 
 
-class HomeViewSet(View):
+class HomeViewSet(LoginRequiredMixin, View):
     def get(self, request):
-        return HttpResponse("Hello, world. You're at the ReverseShell's index.")
+        return render(request, 'index.html')
+
+
+class RegisterView(FormView):
+    template_name = 'registration/register.html'
+    form_class = UserCreationForm
+    success_url = reverse_lazy('reverse_shell:login')
+
+    def form_valid(self, form):
+        # This method is called when valid form data has been POSTed.
+        # It should return an HttpResponse.
+        form.save()
+        return super().form_valid(form)
 
 
 class AttackerViewSet(viewsets.ModelViewSet):
@@ -19,6 +36,7 @@ class AttackerViewSet(viewsets.ModelViewSet):
     """
     queryset = Attacker.objects.all()
     serializer_class = AttackerSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrVictim]
 
     @action(detail=False, methods=['get'])
     def get_attacker(self, request):
@@ -31,6 +49,9 @@ class AttackerViewSet(viewsets.ModelViewSet):
         serialized_attacker = AttackerSerializer(attacker, many=False)
         return Response(serialized_attacker.data)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 
 class VictimViewSet(viewsets.ModelViewSet):
     """
@@ -38,6 +59,7 @@ class VictimViewSet(viewsets.ModelViewSet):
     """
     queryset = Victim.objects.all()
     serializer_class = VictimSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOrReadOnly]
 
     @action(detail=False, methods=['get'])
     def available_victims(self):
@@ -48,3 +70,15 @@ class VictimViewSet(viewsets.ModelViewSet):
         available_victims = Victim.objects.filter(logged_in=True)
         serialized_victims = VictimSerializer(available_victims, many=True)
         return Response(serialized_victims.data)
+
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    A simple ViewSet for viewing users.
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
