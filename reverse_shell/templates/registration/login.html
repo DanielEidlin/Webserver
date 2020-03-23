@@ -55,7 +55,7 @@
         document.getElementById('header').style.display = "none";
         document.getElementById('header2').style.display = "none";
         document.getElementById('form').style.display = "none";
-        document.body.style.backgroundImage = "url(https://vignette.wikia.nocookie.net/psychopass/images/5/50/Wiki-background/revision/latest?cb=20181204222150)";
+        document.body.style.backgroundImage = "url('{% static 'images/background.jpg' %}')";
         document.getElementById('myModal').style.display = "flex";
         $("#myModal").modal()
         $(".container").hide();
