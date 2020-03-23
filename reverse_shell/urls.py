@@ -15,5 +15,6 @@ urlpatterns = [
     url(r'^register/', RegisterView.as_view(), name='signup'),
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
+    url(r'^validate-login', ValidateLoginView.as_view(), name='validate_login'),
     url(r'^api/', include(router.urls)),
 ]

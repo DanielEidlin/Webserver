@@ -7,10 +7,10 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.views.generic.edit import FormView
 from rest_framework import viewsets, permissions
-from django.contrib.auth.forms import UserCreationForm
-from django.shortcuts import get_object_or_404, render
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import get_object_or_404, render, HttpResponse
 from reverse_shell.permissions import IsOwnerOrReadOnly, IsOwnerOrVictim
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 class HomeViewSet(LoginRequiredMixin, View):
@@ -28,6 +28,15 @@ class RegisterView(FormView):
         # It should return an HttpResponse.
         form.save()
         return super().form_valid(form)
+
+
+class ValidateLoginView(View):
+    def post(self, request):
+        form = AuthenticationForm(request, data=request.POST)
+        if form.is_valid():
+            return HttpResponse(status=200)
+        else:
+            return HttpResponse(status=401)
 
 
 class AttackerViewSet(viewsets.ModelViewSet):
