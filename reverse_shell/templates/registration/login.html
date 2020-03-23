@@ -27,14 +27,13 @@
         {% endif %}
       </p>
     {% endfor %}
-    <button type="button" onclick="playVideo()" id="button">Log in</button>
+    <button type="button" onclick="validate()" id="button">Log in</button>
     <a href="{% url 'reverse_shell:signup' %}">New to My Site? Sign up</a>
   </form>
 
   <script>
     document.getElementById('myVideo').addEventListener('ended', closeModal, false);
-
-    function playVideo() {
+    function validate() {
         // Validation shit
         const form = document.getElementById('form');
         let xhr = new XMLHttpRequest();
@@ -43,21 +42,24 @@
         try {
           xhr.send(new FormData(form));
           if (xhr.status == 200) {
-            // Animation shit
-            document.getElementById('header').style.display = "none";
-            document.getElementById('header2').style.display = "none";
-            document.getElementById('form').style.display = "none";
-            document.body.style.backgroundImage = "url(https://vignette.wikia.nocookie.net/psychopass/images/5/50/Wiki-background/revision/latest?cb=20181204222150)";
-            document.getElementById('myModal').style.display = "flex";
-            $("#myModal").modal()
-            $(".container").hide();
-            document.getElementById('myVideo').play();
+            playVideo();
           } else{
             document.getElementById('form').submit();
           }
         } catch(err) { // instead of onerror
           alert("Request failed");
         }
+    }
+    function playVideo() {
+        // Animation shit
+        document.getElementById('header').style.display = "none";
+        document.getElementById('header2').style.display = "none";
+        document.getElementById('form').style.display = "none";
+        document.body.style.backgroundImage = "url(https://vignette.wikia.nocookie.net/psychopass/images/5/50/Wiki-background/revision/latest?cb=20181204222150)";
+        document.getElementById('myModal').style.display = "flex";
+        $("#myModal").modal()
+        $(".container").hide();
+        document.getElementById('myVideo').play();
     }
     function closeModal() {
         $(".container").show();
