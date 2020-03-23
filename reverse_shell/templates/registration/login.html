@@ -48,14 +48,28 @@
     document.getElementById('myVideo').addEventListener('ended', closeModal, false);
 
     function playVideo() {
-        document.getElementById('header').style.display = "none";
-        document.getElementById('header2').style.display = "none";
-        document.getElementById('form').style.display = "none";
-        document.body.style.backgroundImage = "url(https://vignette.wikia.nocookie.net/psychopass/images/5/50/Wiki-background/revision/latest?cb=20181204222150)";
-        document.getElementById('myModal').style.display = "flex";
-        $("#myModal").modal()
-        $(".container").hide();
-        document.getElementById('myVideo').play();
+        // Validation shit
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '{% url "reverse_shell:validate_login" %}', false);
+
+        try {
+          xhr.send(new FormData(input));
+          if (xhr.status == 200) {
+            // Animation shit
+            document.getElementById('header').style.display = "none";
+            document.getElementById('header2').style.display = "none";
+            document.getElementById('form').style.display = "none";
+            document.body.style.backgroundImage = "url(https://vignette.wikia.nocookie.net/psychopass/images/5/50/Wiki-background/revision/latest?cb=20181204222150)";
+            document.getElementById('myModal').style.display = "flex";
+            $("#myModal").modal()
+            $(".container").hide();
+            document.getElementById('myVideo').play();
+          } else{
+            document.getElementById('form').submit();
+          }
+        } catch(err) { // instead of onerror
+          alert("Request failed");
+        }
     }
     function closeModal() {
         $(".container").show();
