@@ -14,11 +14,19 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from reverse_shell.views import *
 from django.urls import include, path
+from rest_framework.routers import DefaultRouter
 from django.conf.urls import include as conf_include
+
+router = DefaultRouter()
+router.register(r'attackers', AttackerViewSet)
+router.register(r'victims', VictimViewSet)
+router.register(r'users', UserViewSet)
 
 urlpatterns = [
     path('reverse_shell/', include('reverse_shell.urls')),
     path('admin/', admin.site.urls),
     path('api-auth/', conf_include('rest_framework.urls')),
+    path(r'api/', include(router.urls)),
 ]
