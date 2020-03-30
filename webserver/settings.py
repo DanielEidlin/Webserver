@@ -44,18 +44,15 @@ INSTALLED_APPS = [
 ]
 
 # Channels
+ASGI_APPLICATION = 'webserver.routing.application'
 CHANNEL_LAYERS = {
-    "default": {
-        "BACKEND": "asgi_redis.RedisChannelLayer",
-        "CONFIG": {
-            "hosts": [os.environ.get('REDIS_URL', 'redis://localhost:6379')],
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('127.0.0.1', 6379)],
         },
-        "ROUTING": "chat.routing.channel_routing",
     },
 }
-
-# Channels
-ASGI_APPLICATION = 'webserver.routing.application'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
