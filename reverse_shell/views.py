@@ -39,6 +39,11 @@ class ValidateLoginView(View):
             return HttpResponse(status=401)
 
 
+class RoomView(View):
+    def get(self, request, room_name):
+        return render(request, 'room.html', {'room_name': room_name})
+
+
 class AttackerViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing attackers.
