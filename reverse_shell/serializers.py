@@ -4,12 +4,16 @@ from django.contrib.auth.models import User
 
 
 class AttackerSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = Attacker
         fields = ['ip', 'port', 'computer_name', 'mac_address', 'victim', 'owner']
 
 
 class VictimSerializer(serializers.ModelSerializer):
+    owner = serializers.ReadOnlyField(source='owner.username')
+
     class Meta:
         model = Victim
         fields = ['ip', 'port', 'computer_name', 'mac_address', 'logged_in', 'owner']
