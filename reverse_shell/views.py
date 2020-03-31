@@ -31,6 +31,9 @@ class RegisterView(FormView):
 
 
 class ValidateLoginView(View):
+    def get(self, request):
+        return HttpResponse(status=200)
+        
     def post(self, request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
