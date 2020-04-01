@@ -10,5 +10,5 @@ urlpatterns = [
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^validate-login', ValidateLoginView.as_view(), name='validate_login'),
-    path('<str:room_name>/', RoomView.as_view(), name='room'),
+    path('connect/<str:room_name>/', RoomView.as_view(), name='room'),
 ]
