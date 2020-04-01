@@ -7,7 +7,9 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.views.generic.edit import FormView
 from rest_framework import viewsets, permissions
+from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.decorators.csrf import ensure_csrf_cookie
 from django.shortcuts import get_object_or_404, render, HttpResponse
 from reverse_shell.permissions import IsOwnerOrReadOnly, IsOwnerOrVictim
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -30,7 +32,12 @@ class RegisterView(FormView):
         return super().form_valid(form)
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class ValidateLoginView(View):
+
+    def get(self, request):
+        return HttpResponse(status=200)
+
     def post(self, request):
         form = AuthenticationForm(request, data=request.POST)
         if form.is_valid():
@@ -44,6 +51,7 @@ class RoomView(View):
         return render(request, 'room.html', {'room_name': room_name})
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class AttackerViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing attackers.
@@ -67,6 +75,7 @@ class AttackerViewSet(viewsets.ModelViewSet):
         serializer.save(owner=self.request.user)
 
 
+@method_decorator(ensure_csrf_cookie, name='dispatch')
 class VictimViewSet(viewsets.ModelViewSet):
     """
     A simple ViewSet for viewing victims.
