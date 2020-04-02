@@ -10,7 +10,7 @@ class Victim(models.Model):
     channel_name = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):
-        return f'{self.computer_name} {self.ip} {self.port}'
+        return self.computer_name
 
 
 class Attacker(models.Model):
@@ -20,7 +20,7 @@ class Attacker(models.Model):
     owner = models.OneToOneField(User, related_name='attacker', on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.computer_name} {self.ip} {self.port}'
+        return self.name
 
     def save(self):
         self.name = self.owner.username
