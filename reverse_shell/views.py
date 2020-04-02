@@ -47,8 +47,8 @@ class ValidateLoginView(View):
 
 
 class RoomView(View):
-    def get(self, request, room_name):
-        return render(request, 'room.html', {'room_name': room_name})
+    def get(self, request):
+        return render(request, 'room.html')
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
