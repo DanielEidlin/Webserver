@@ -1,3 +1,4 @@
+from django import forms
 from .serializers import *
 from django.views import View
 from django.urls import reverse_lazy
@@ -20,9 +21,17 @@ class HomeViewSet(LoginRequiredMixin, View):
         return render(request, 'index.html')
 
 
+class RegistrationForm(UserCreationForm):
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken!")
+        return self.cleaned_data
+
+
 class RegisterView(FormView):
     template_name = 'registration/register.html'
-    form_class = UserCreationForm
+    form_class = RegistrationForm
     success_url = reverse_lazy('reverse_shell:login')
 
     def form_valid(self, form):
