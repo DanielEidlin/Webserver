@@ -8,7 +8,7 @@ class AttackerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Attacker
-        fields = ['ip', 'port', 'computer_name', 'mac_address', 'victim', 'owner']
+        fields = ['name', 'victim', 'owner', 'channel_name']
 
 
 class VictimSerializer(serializers.ModelSerializer):
@@ -16,7 +16,7 @@ class VictimSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Victim
-        fields = ['ip', 'port', 'computer_name', 'mac_address', 'logged_in', 'owner']
+        fields = ['computer_name', 'mac_address', 'logged_in', 'owner', 'channel_name']
 
 
 class UserSerializer(serializers.ModelSerializer):

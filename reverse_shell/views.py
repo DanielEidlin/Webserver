@@ -1,3 +1,4 @@
+from django import forms
 from .serializers import *
 from django.views import View
 from django.urls import reverse_lazy
@@ -10,9 +11,17 @@ from rest_framework import viewsets, permissions
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import get_object_or_404, render, HttpResponse
 from reverse_shell.permissions import IsOwnerOrReadOnly, IsOwnerOrVictim
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
+
+def update_victim(user, logged_in):
+    victim = Victim.objects.filter(owner=user).first()
+    if victim:
+        victim.logged_in = logged_in
+        victim.save()
 
 
 class HomeViewSet(LoginRequiredMixin, View):
@@ -20,9 +29,17 @@ class HomeViewSet(LoginRequiredMixin, View):
         return render(request, 'index.html')
 
 
+class RegistrationForm(UserCreationForm):
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        if User.objects.filter(username=username).exists():
+            raise forms.ValidationError("This username is already taken!")
+        return self.cleaned_data
+
+
 class RegisterView(FormView):
     template_name = 'registration/register.html'
-    form_class = UserCreationForm
+    form_class = RegistrationForm
     success_url = reverse_lazy('reverse_shell:login')
 
     def form_valid(self, form):
@@ -44,6 +61,24 @@ class ValidateLoginView(View):
             return HttpResponse(status=200)
         else:
             return HttpResponse(status=401)
+
+
+class LoginView(LoginView):
+    def form_valid(self, form):
+        update_victim(form.get_user(), logged_in=True)
+        return super().form_valid(form)
+
+
+class LogoutView(LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_anonymous:
+            update_victim(request.user, logged_in=False)
+        return super().dispatch(request)
+
+
+class AttackView(View):
+    def get(self, request):
+        return render(request, 'attack.html')
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
