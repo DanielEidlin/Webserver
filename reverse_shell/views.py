@@ -18,7 +18,6 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 def update_victim(user, logged_in):
-    print(user)
     victim = Victim.objects.filter(owner=user).first()
     if victim:
         victim.logged_in = logged_in
