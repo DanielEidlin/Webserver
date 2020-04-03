@@ -9,5 +9,5 @@ urlpatterns = [
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
     url(r'^validate-login', ValidateLoginView.as_view(), name='validate_login'),
-    path('attack/', RoomView.as_view(), name='attack'),
+    path('attack/', AttackView.as_view(), name='attack'),
 ]

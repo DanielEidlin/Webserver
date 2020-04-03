@@ -76,9 +76,9 @@ class LogoutView(LogoutView):
         return super().dispatch(request)
 
 
-class RoomView(View):
+class AttackView(View):
     def get(self, request):
-        return render(request, 'room.html')
+        return render(request, 'attack.html')
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
