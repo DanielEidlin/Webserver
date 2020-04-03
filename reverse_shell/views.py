@@ -11,9 +11,18 @@ from rest_framework import viewsets, permissions
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.decorators.csrf import ensure_csrf_cookie
+from django.contrib.auth.views import LoginView, LogoutView
 from django.shortcuts import get_object_or_404, render, HttpResponse
 from reverse_shell.permissions import IsOwnerOrReadOnly, IsOwnerOrVictim
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+
+
+def update_victim(user, logged_in):
+    print(user)
+    victim = Victim.objects.filter(owner=user).first()
+    if victim:
+        victim.logged_in = logged_in
+        victim.save()
 
 
 class HomeViewSet(LoginRequiredMixin, View):
@@ -53,6 +62,19 @@ class ValidateLoginView(View):
             return HttpResponse(status=200)
         else:
             return HttpResponse(status=401)
+
+
+class LoginView(LoginView):
+    def form_valid(self, form):
+        update_victim(form.get_user(), logged_in=True)
+        return super().form_valid(form)
+
+
+class LogoutView(LogoutView):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_anonymous:
+            update_victim(request.user, logged_in=False)
+        return super().dispatch(request)
 
 
 class RoomView(View):

@@ -1,7 +1,6 @@
 from .views import *
-from django.conf.urls import url
 from django.urls import path
-from django.contrib.auth.views import LoginView, LogoutView
+from django.conf.urls import url
 
 app_name = 'reverse_shell'
 urlpatterns = [
