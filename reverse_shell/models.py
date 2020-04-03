@@ -24,4 +24,4 @@ class Attacker(models.Model):
 
     def save(self):
         self.name = self.owner.username
-        super.save()
+        super().save()

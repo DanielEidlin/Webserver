@@ -16,7 +16,6 @@ class AttackerConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        print(text_data)
         user = self.scope['user']
         text_data_json = json.loads(text_data)
         channel_name = await self.get_victim_channel_name(user)
@@ -52,7 +51,6 @@ class VictimConsumer(AsyncWebsocketConsumer):
 
     # Receive message from WebSocket
     async def receive(self, text_data):
-        print(text_data)
         user = self.scope['user']
         text_data_json = json.loads(text_data)
         channel_name = await self.get_attacker_channel_name(user)
