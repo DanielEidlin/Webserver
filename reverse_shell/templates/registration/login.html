@@ -1,84 +1,100 @@
-{% extends 'base.html' %}
-{% load static %}
 
-{% block content %}
-  <link rel="stylesheet" href="{% static 'css/modal.css' %}">
-  <div class="modal fade" id="myModal" role="dialog" style="display: none;">
-      <div class="modal-dialog modal-md">
-        <center><video id="myVideo" class="myVideo" src="{% static 'images/video.mp4' %}"></video></center>
-      </div>
-  </div>
-  <h2 id="header2">Log in to My Site</h2>
-  {% if form.errors %}
-    <p style="color: red">Your username and password didn't match. Please try again.</p>
-  {% endif %}
-  <form method="post" id="form">
-    {% csrf_token %}
-    <input type="hidden" name="next" value="{{ next }}" id="input"/>
-    {% for field in form %}
-      <p>
-        {{ field.label_tag }}<br>
-        {{ field }}<br>
-        {% for error in field.errors %}
-          <p style="color: red">{{ error }}</p>
+<!DOCTYPE html>
+<html lang="en"><head>
+    {% load static %}
+    <meta charset="utf-8">
+    <title>Hacking is fun 😋</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="{% static 'css/modal.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    </head>
+  <body>
+    <main>
+    <div class="modal fade" id="myModal" role="dialog" style="display: none;">
+        <div class="modal-dialog modal-md">
+          <center><video id="myVideo" class="myVideo" src="{% static 'images/video.mp4' %}"></video></center>
+        </div>
+    </div>
+    <h2 id="header2">Log In to The Reverse shell Operating Site</h2>
+    {% if form.errors %}
+      <p style="color: red">Your username and password didn't match. Please try again.</p>
+    {% endif %}
+    <div id="main_body">
+      <form method="post" id="form">
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ next }}" id="input"/>
+        {% for field in form %}
+          <p>
+            {{ field.label_tag }}<br>
+            {{ field }}<br>
+            {% for error in field.errors %}
+              <p style="color: red">{{ error }}</p>
+            {% endfor %}
+            {% if field.help_text %}
+              <p><small style="color: grey">{{ field.help_text }}</small></p>
+            {% endif %}
+          </p>
         {% endfor %}
-        {% if field.help_text %}
-          <p><small style="color: grey">{{ field.help_text }}</small></p>
-        {% endif %}
-      </p>
-    {% endfor %}
-    <button type="button" onclick="validate()" id="button">Log in</button>
-    <a href="{% url 'reverse_shell:signup' %}">New to My Site? Sign up</a>
-  </form>
+        <button type="button" onclick="validate()" id="button">Log in</button>
+        <br><br>
+        <a id="sign_up" href="{% url 'reverse_shell:signup' %}">New to My Site? Sign up</a>
+      </form>
+    </div>
+    <div id="footer" class="footer">
+    <p>All rights are reserved to Daniel Eidlin.</p>
+    </div>
+    </main>
+  </body>
+</html>
 
-  <script>
-    // Get the form object
-    var input = document.getElementById("form");
+<script>
+  // Get the form object
+  var input = document.getElementById("form");
 
-    // Execute the validate function when the user releases the enter key on the keyboard
-    input.addEventListener("keyup", function(event) {
-      // Number 13 is the "Enter" key on the keyboard
-      if (event.keyCode === 13) {
-        // Cancel the default action, if needed
-        event.preventDefault();
-        // Trigger the button element with a click
-        document.getElementById("button").click();
-      }
-    });
+  // Execute the validate function when the user releases the enter key on the keyboard
+  input.addEventListener("keyup", function(event) {
+    // Number 13 is the "Enter" key on the keyboard
+    if (event.keyCode === 13) {
+      // Cancel the default action, if needed
+      event.preventDefault();
+      // Trigger the button element with a click
+      document.getElementById("button").click();
+    }
+  });
 
-    document.getElementById('myVideo').addEventListener('ended', closeModal, false);
-    function validate() {
-        // Validation shit
-        const form = document.getElementById('form');
-        let xhr = new XMLHttpRequest();
-        xhr.open('POST', '{% url "reverse_shell:validate_login" %}', false);
+  document.getElementById('myVideo').addEventListener('ended', closeModal, false);
+  function validate() {
+      // Validation shit
+      const form = document.getElementById('form');
+      let xhr = new XMLHttpRequest();
+      xhr.open('POST', '{% url "reverse_shell:validate_login" %}', false);
 
-        try {
-          xhr.send(new FormData(form));
-          if (xhr.status == 200) {
-            playVideo();
-          } else{
-            document.getElementById('form').submit();
-          }
-        } catch(err) { // instead of onerror
-          alert("Request failed");
+      try {
+        xhr.send(new FormData(form));
+        if (xhr.status == 200) {
+          playVideo();
+        } else{
+          document.getElementById('form').submit();
         }
-    }
-    function playVideo() {
-        // Animation shit
-        document.getElementById('header').style.display = "none";
-        document.getElementById('header2').style.display = "none";
-        document.getElementById('form').style.display = "none";
-        document.body.style.backgroundImage = "url('{% static 'images/background.jpg' %}')";
-        document.getElementById('myModal').style.display = "flex";
-        $("#myModal").modal()
-        $(".container").hide();
-        document.getElementById('myVideo').play();
-    }
-    function closeModal() {
-        $(".container").show();
-        $('#myModal').modal('hide');
-        document.getElementById('form').submit();
-    }
-  </script>
-{% endblock %}
+      } catch(err) { // instead of onerror
+        console.error(err);
+      }
+  }
+  function playVideo() {
+      // Animation shit
+      document.getElementById('footer').style.display = "none";
+      document.getElementById('header2').style.display = "none";
+      document.getElementById('form').style.display = "none";
+      document.body.style.backgroundImage = "url('{% static 'images/background.jpg' %}')";
+      document.getElementById('myModal').style.display = "flex";
+      $("#myModal").modal()
+      $(".container").hide();
+      document.getElementById('myVideo').play();
+  }
+  function closeModal() {
+      $(".container").show();
+      $('#myModal').modal('hide');
+      document.getElementById('form').submit();
+  }
+</script>
