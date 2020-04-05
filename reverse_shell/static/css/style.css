@@ -1,0 +1,52 @@
+#header2 {
+  padding: 60px;
+  text-align: center;
+  background: #03254c;
+  color: white;
+  font-size: 30px;
+  font-weight: normal;
+}
+
+#main_body {
+  padding: 20px;
+  margin-top: 5%;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+  text-align: center;
+  background: #187bcd;
+  color: white;
+  font-size: 25px;
+}
+
+#sign_up {
+  text-align: center;
+  color: white;
+  font-size: 25px;
+}
+
+#button {
+   display: inline-block;
+  -webkit-box-sizing: content-box;
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+  cursor: pointer;
+  padding: 10px 20px;
+  border: 1px solid #018dc4;
+  -webkit-border-radius: 3px;
+  border-radius: 3px;
+  font: normal 16px/normal "Times New Roman", Times, serif;
+  color: rgba(255,255,255,0.9);
+  background: #03254c;
+}
+
+.footer {
+  position: fixed;
+  left: 0;
+  width: 100%;
+  padding: 40px;
+  background-color: #3f3f3f;
+  color: white;
+  text-align: left;
+  bottom: 0;
+}
