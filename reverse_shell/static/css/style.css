@@ -4,6 +4,7 @@
   background: #03254c;
   color: white;
   font-size: 30px;
+  font-weight: normal;
 }
 
 #main_body {
@@ -23,7 +24,6 @@
   color: white;
   font-size: 25px;
 }
-
 
 #button {
    display: inline-block;

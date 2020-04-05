@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en"><head>
     {% load static %}
@@ -11,39 +10,39 @@
     </head>
   <body>
     <main>
-    <div class="modal fade" id="myModal" role="dialog" style="display: none;">
-        <div class="modal-dialog modal-md">
-          <center><video id="myVideo" class="myVideo" src="{% static 'images/video.mp4' %}"></video></center>
+        <div class="modal fade" id="myModal" role="dialog" style="display: none;">
+            <div class="modal-dialog modal-md">
+              <center><video id="myVideo" class="myVideo" src="{% static 'images/video.mp4' %}"></video></center>
+            </div>
         </div>
-    </div>
-    <h2 id="header2">Log In to The Reverse shell Operating Site</h2>
-    {% if form.errors %}
-      <p style="color: red">Your username and password didn't match. Please try again.</p>
-    {% endif %}
-    <div id="main_body">
-      <form method="post" id="form">
-        {% csrf_token %}
-        <input type="hidden" name="next" value="{{ next }}" id="input"/>
-        {% for field in form %}
-          <p>
-            {{ field.label_tag }}<br>
-            {{ field }}<br>
-            {% for error in field.errors %}
-              <p style="color: red">{{ error }}</p>
+        <h2 id="header2">Log In to The Reverse shell Operating Site</h2>
+        <div id="main_body">
+          {% if form.errors %}
+            <p style="color: red">Your username and password didn't match. Please try again.</p>
+          {% endif %}
+          <form method="post" id="form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next }}" id="input"/>
+            {% for field in form %}
+              <p>
+                {{ field.label_tag }}<br>
+                {{ field }}<br>
+                {% for error in field.errors %}
+                  <p style="color: red">{{ error }}</p>
+                {% endfor %}
+                {% if field.help_text %}
+                  <p><small style="color: grey">{{ field.help_text }}</small></p>
+                {% endif %}
+              </p>
             {% endfor %}
-            {% if field.help_text %}
-              <p><small style="color: grey">{{ field.help_text }}</small></p>
-            {% endif %}
-          </p>
-        {% endfor %}
-        <button type="button" onclick="validate()" id="button">Log in</button>
-        <br><br>
-        <a id="sign_up" href="{% url 'reverse_shell:signup' %}">New to My Site? Sign up</a>
-      </form>
-    </div>
-    <div id="footer" class="footer">
-    <p>All rights are reserved to Daniel Eidlin.</p>
-    </div>
+            <button type="button" onclick="validate()" id="button">Log in</button>
+            <br><br>
+            <a id="sign_up" href="{% url 'reverse_shell:signup' %}">New to My Site? Sign up</a>
+          </form>
+        </div>
+        <div id="footer" class="footer">
+        <p>All rights are reserved to Daniel Eidlin.</p>
+        </div>
     </main>
   </body>
 </html>
