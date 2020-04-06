@@ -29,17 +29,9 @@ class HomeViewSet(LoginRequiredMixin, View):
         return render(request, 'index.html')
 
 
-class RegistrationForm(UserCreationForm):
-    def clean(self):
-        username = self.cleaned_data.get('username')
-        if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("This username is already taken!")
-        return self.cleaned_data
-
-
 class RegisterView(FormView):
     template_name = 'registration/register.html'
-    form_class = RegistrationForm
+    form_class = UserCreationForm
     success_url = reverse_lazy('reverse_shell:login')
 
     def form_valid(self, form):
