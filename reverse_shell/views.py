@@ -1,4 +1,3 @@
-from django import forms
 from .serializers import *
 from django.views import View
 from django.urls import reverse_lazy
@@ -7,6 +6,7 @@ from django.contrib.auth.models import User
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from django.views.generic.edit import FormView
+from django.views.generic.list import ListView
 from rest_framework import viewsets, permissions
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -70,6 +70,13 @@ class LogoutView(LogoutView):
         return super().dispatch(request)
 
 
+class VictimsView(ListView, LoginRequiredMixin):
+    model = Victim
+    context_object_name = 'victims_list'   # name for the list as a template variable
+    queryset = Victim.objects.filter(logged_in=True)
+    template_name = 'choose_victim.html'  # Specify template name/location
+
+
 class AttackView(View):
     def get(self, request):
         return render(request, 'attack.html')
@@ -87,11 +94,9 @@ class AttackerViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def get_attacker(self, request):
         """
-        Returns all the attacker who requested to connect to this victim.
-        :return: Serialized attacker that requested to connect to this victim.
+        Returns attacker by request user.
         """
-        mac_address = request.query_params['mac_address']
-        attacker = get_object_or_404(Attacker, victim__mac_address=mac_address)
+        attacker = get_object_or_404(Attacker, owner=request.user)
         serialized_attacker = AttackerSerializer(attacker, many=False)
         return Response(serialized_attacker.data)
 

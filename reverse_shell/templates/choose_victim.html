@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Victims</h1>
+    <ul>
+    {% for victim in object_list %}
+        <li>{{ victim.computer_name }}
+            <button>Connect</button>
+        </li>
+    {% empty %}
+        <li>No victims available.</li>
+    {% endfor %}
+    </ul>
+{% endblock %}
