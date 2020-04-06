@@ -8,7 +8,7 @@ urlpatterns = [
     url(r'^register/', RegisterView.as_view(), name='signup'),
     url(r'^login/', LoginView.as_view(), name='login'),
     url(r'^logout/', LogoutView.as_view(), name='logout'),
-    url(r'^validate-login', ValidateLoginView.as_view(), name='validate_login'),
+    url(r'^validate-login/', ValidateLoginView.as_view(), name='validate_login'),
     path('choose-victim/', VictimsView.as_view(), name='choose_victim'),
-    path('attack/', AttackView.as_view(), name='attack'),
+    path('attack/<str:mac_address>/', AttackView.as_view(), name='attack'),
 ]
