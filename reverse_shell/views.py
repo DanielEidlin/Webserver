@@ -45,7 +45,9 @@ class RegisterView(FormView):
     def form_valid(self, form):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
-        form.save()
+        user = form.save()
+        # Create Attacker with the user as the owner
+        Attacker.objects.create(owner=user)
         return super().form_valid(form)
 
 
