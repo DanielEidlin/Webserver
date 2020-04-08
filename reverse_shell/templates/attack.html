@@ -26,6 +26,7 @@
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
             term.writeln(data.message);
+            term.write('\r\n$ ');
         };
 
         chatSocket.onclose = function(e) {
@@ -47,7 +48,7 @@
             term.writeln("You are now connected to the victim's terminal.");
             term.writeln('You have admin permissions so feel free to play around 😉');
             term.writeln('');
-            prompt(term);
+            term.write('\r\n$ ');
 
             term.onKey(e => {
                 const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
