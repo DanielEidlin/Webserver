@@ -20,6 +20,7 @@
 
         var term = new Terminal();
         term.open(document.getElementById('terminal'));
+        term.resize(180, 50);
         var command = '';
         var cursor = 0;
         var command_history = [];
