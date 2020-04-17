@@ -38,9 +38,10 @@ class RegisterView(FormView):
         # This method is called when valid form data has been POSTed.
         # It should return an HttpResponse.
         user = form.save()
-        # Create Attacker with the user as the owner
-        Attacker.objects.create(owner=user)
-        return super().form_valid(form)
+        if 'victim' not in self.request.POST:
+            # Create Attacker with the user as the owner
+            Attacker.objects.create(owner=user)
+            return super().form_valid(form)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
