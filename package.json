@@ -1,0 +1,23 @@
+{
+  "name": "Webserver",
+  "version": "1.0.0",
+  "description": "A web server for my ReverseShell application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DanielEidlin/Webserver.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DanielEidlin/Webserver/issues"
+  },
+  "homepage": "https://github.com/DanielEidlin/Webserver#readme",
+  "dependencies": {
+    "xterm": "^4.5.0"
+  }
+}
