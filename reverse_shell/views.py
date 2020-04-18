@@ -82,7 +82,6 @@ class AttackView(View):
     def get(self, request, mac_address):
         attacker = get_object_or_404(Attacker, owner=request.user)
         victim = get_object_or_404(Victim, mac_address=mac_address)
-        print(mac_address, victim, attacker)
         attacker.victim = victim
         attacker.save()
         return render(request, 'attack.html')
