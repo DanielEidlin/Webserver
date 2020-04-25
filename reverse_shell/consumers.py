@@ -74,3 +74,9 @@ class VictimConsumer(AsyncWebsocketConsumer):
         attacker = Attacker.objects.get(victim__owner=user)
         channel_name = attacker.channel_name
         return channel_name
+
+    @database_sync_to_async
+    def update_victim_logged_in_field(self, user):
+        victim = Victim.objects.get(owner=user)
+        victim.logged_in = False
+        victim.save()
