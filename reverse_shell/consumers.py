@@ -47,7 +47,9 @@ class VictimConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        pass
+        # Update the victim's logged_in field to be False
+        user = self.scope['user']
+        await self.update_victim_logged_in_field(user)
 
     # Receive message from WebSocket
     async def receive(self, text_data):
