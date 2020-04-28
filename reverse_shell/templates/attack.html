@@ -32,7 +32,6 @@
     webSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         term.writeln(data.message);
-        term.write('\r\n$ ');
     };
 
     webSocket.onclose = function(e) {
@@ -135,7 +134,7 @@
         term.write('$ ');
       }
       else {
-        term.write('\r\n$ ');
+        term.prompt()
         // Send command to victim's terminal via websocket.
         webSocket.send(JSON.stringify({
               'message': command
