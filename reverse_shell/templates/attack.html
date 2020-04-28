@@ -32,6 +32,7 @@
     webSocket.onmessage = function(e) {
         const data = JSON.parse(e.data);
         term.write(data.message);
+        term.prompt();
     };
 
     webSocket.onclose = function(e) {
