@@ -127,8 +127,11 @@
             'message': command
         }));
       if (command === 'quit') {
-        webSocket.close()
+        webSocket.close();
         window.location.assign('https://intense-river-70224.herokuapp.com/reverse_shell/');
+      }
+      else if (command === 'cls') {
+        term.clear();
       }
       if (command !== '') {
         command_history.push(command);
