@@ -6,6 +6,9 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 
 class AttackerConsumer(AsyncWebsocketConsumer):
+    """
+    Consumer for handling Attacker websockets.
+    """
     async def connect(self):
         user = self.scope['user']
         await self.set_channel_name(user)
@@ -28,12 +31,18 @@ class AttackerConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_channel_name(self, user):
+        """
+        Sets the channel name on the Attacker connected to this user.
+        """
         attacker = Attacker.objects.get(owner=user)
         attacker.channel_name = self.channel_name
         attacker.save()
 
     @database_sync_to_async
     def get_victim_channel_name(self, user):
+        """
+        Gets the channel name of the Victim connected to this user's Attacker.
+        """
         attacker = Attacker.objects.get(owner=user)
         victim = attacker.victim
         channel_name = victim.channel_name
@@ -41,6 +50,9 @@ class AttackerConsumer(AsyncWebsocketConsumer):
 
 
 class VictimConsumer(AsyncWebsocketConsumer):
+    """
+    Consumer for handling Attacker websockets.
+    """
     async def connect(self):
         user = self.scope['user']
         await self.set_channel_name(user)
@@ -65,18 +77,27 @@ class VictimConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def set_channel_name(self, user):
+        """
+        Sets the channel name on the Attacker connected to this user.
+        """
         victim = Victim.objects.get(owner=user)
         victim.channel_name = self.channel_name
         victim.save()
 
     @database_sync_to_async
     def get_attacker_channel_name(self, user):
+        """
+        Gets the channel name of the Victim connected to this user's Attacker.
+        """
         attacker = Attacker.objects.get(victim__owner=user)
         channel_name = attacker.channel_name
         return channel_name
 
     @database_sync_to_async
     def update_victim_logged_in_field(self, user):
+        """
+        Set the Victim's logged_in field to False.
+        """
         victim = Victim.objects.get(owner=user)
         victim.logged_in = False
         victim.save()
