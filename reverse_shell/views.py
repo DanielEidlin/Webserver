@@ -18,6 +18,9 @@ from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 
 
 def update_victim(user, logged_in):
+    """
+    Update the victim's logged_in field to either True or False.
+    """
     victim = Victim.objects.filter(owner=user).first()
     if victim:
         victim.logged_in = logged_in
@@ -25,11 +28,18 @@ def update_victim(user, logged_in):
 
 
 class HomeViewSet(LoginRequiredMixin, View):
+    """
+    Index view. Renders the index html page.
+    """
     def get(self, request):
         return render(request, 'index.html')
 
 
 class RegisterView(FormView):
+    """
+    Register view. Renders a UserCreationForm and creates a User using the information provided.
+    Redirects to login page after a successfull creation.
+    """
     template_name = 'registration/register.html'
     form_class = UserCreationForm
     success_url = reverse_lazy('reverse_shell:login')
@@ -39,13 +49,16 @@ class RegisterView(FormView):
         # It should return an HttpResponse.
         user = form.save()
         if 'victim' not in self.request.POST:
-            # Create Attacker with the user as the owner
+            # Create Attacker with the user as the owner.
             Attacker.objects.create(owner=user)
             return super().form_valid(form)
 
 
 @method_decorator(ensure_csrf_cookie, name='dispatch')
 class ValidateLoginView(View):
+    """
+    This view accepts login credentials and returns a response depending on whether or not the credentials ar valid.
+    """
 
     def get(self, request):
         return HttpResponse(status=200)
@@ -59,19 +72,31 @@ class ValidateLoginView(View):
 
 
 class LoginView(LoginView):
+    """
+    Login view. Accepts login credentials and checks if they are valid. Uses the login.html as the template.
+    Redirects to the address stored in LOGIN_REDIRECT_URL in settings.py.
+    """
     def form_valid(self, form):
-        update_victim(form.get_user(), logged_in=True)
+        update_victim(form.get_user(), logged_in=True)  # Update the victim's state to logged in.
         return super().form_valid(form)
 
 
 class LogoutView(LogoutView):
+    """
+    Logout view. Logs the user out. Uses the logout.html as the template.
+    Redirects to the address stored in LOGOUT_REDIRECT_URL in settings.py.
+    """
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_anonymous:
-            update_victim(request.user, logged_in=False)
+            update_victim(request.user, logged_in=False)    # Update the victim's state to logged out.
         return super().dispatch(request)
 
 
 class VictimsView(ListView, LoginRequiredMixin):
+    """
+    The view for choosing a victim. The view displays only the logged in victims and lets the attacker choose to which
+    one to connect.
+    """
     model = Victim
     context_object_name = 'victims_list'   # name for the list as a template variable
     queryset = Victim.objects.filter(logged_in=True, attacker__isnull=True)
@@ -79,6 +104,10 @@ class VictimsView(ListView, LoginRequiredMixin):
 
 
 class AttackView(View):
+    """
+    Attack view. Tries to connect to the victim if there is one connected to the attacker. In this view the attacker
+    executes the commands that are run on the victim's computer.
+    """
     def get(self, request, mac_address):
         attacker = get_object_or_404(Attacker, owner=request.user)
         victim = get_object_or_404(Victim, mac_address=mac_address)
