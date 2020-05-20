@@ -74,7 +74,7 @@ class LogoutView(LogoutView):
 class VictimsView(ListView, LoginRequiredMixin):
     model = Victim
     context_object_name = 'victims_list'   # name for the list as a template variable
-    queryset = Victim.objects.filter(logged_in=True)
+    queryset = Victim.objects.filter(logged_in=True, attacker__isnull=True)
     template_name = 'choose_victim.html'  # Specify template name/location
 
 
