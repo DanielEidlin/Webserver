@@ -12,7 +12,9 @@ class AttackerConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        pass
+        # Update the attacker's victim field to None.
+        user = self.scope['user']
+        await self.update_attacker(user)
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -39,6 +41,12 @@ class AttackerConsumer(AsyncWebsocketConsumer):
         channel_name = victim.channel_name
         return channel_name
 
+    @database_sync_to_async
+    def update_attacker(self, user):
+        attacker = Attacker.objects.get(owner=user)
+        attacker.victim = None
+        attacker.save()
+
 
 class VictimConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -47,9 +55,9 @@ class VictimConsumer(AsyncWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, close_code):
-        # Update the victim's logged_in field to be False
+        # Update the victim's logged_in field to False and attacker field to None.
         user = self.scope['user']
-        await self.update_victim_logged_in_field(user)
+        await self.update_victim(user)
 
     # Receive message from WebSocket
     async def receive(self, text_data):
@@ -76,7 +84,8 @@ class VictimConsumer(AsyncWebsocketConsumer):
         return channel_name
 
     @database_sync_to_async
-    def update_victim_logged_in_field(self, user):
+    def update_victim(self, user):
         victim = Victim.objects.get(owner=user)
         victim.logged_in = False
+        victim.attacker = None
         victim.save()
