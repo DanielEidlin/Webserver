@@ -37,7 +37,12 @@
 
     webSocket.onclose = function(e) {
         console.error('Chat socket closed unexpectedly');
+        window.location.assign('https://intense-river-70224.herokuapp.com/reverse_shell/');
     };
+
+    webSocket.onerror = function(e) {
+        webSocket.close();
+    }
 
     function runFakeTerminal() {
         if (term._initialized) {
