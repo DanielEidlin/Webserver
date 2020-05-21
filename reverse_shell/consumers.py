@@ -24,8 +24,11 @@ class AttackerConsumer(AsyncWebsocketConsumer):
         user = self.scope['user']
         text_data_json = json.loads(text_data)
         channel_name = await self.get_victim_channel_name(user)
-        channel_layer = get_channel_layer()
-        await channel_layer.send(channel_name, {'type': 'command', 'message': text_data_json['message']})
+        if channel_name:
+            channel_layer = get_channel_layer()
+            await channel_layer.send(channel_name, {'type': 'command', 'message': text_data_json['message']})
+        else:
+            await self.disconnect()
 
     async def display(self, event):
         # Send message to WebSocket
@@ -54,6 +57,7 @@ class AttackerConsumer(AsyncWebsocketConsumer):
     def update_attacker(self, user):
         attacker = Attacker.objects.get(owner=user)
         attacker.victim = None
+        attacker.channel_name = None
         attacker.save()
 
 
@@ -76,8 +80,11 @@ class VictimConsumer(AsyncWebsocketConsumer):
         user = self.scope['user']
         text_data_json = json.loads(text_data)
         channel_name = await self.get_attacker_channel_name(user)
-        channel_layer = get_channel_layer()
-        await channel_layer.send(channel_name, {'type': 'display', 'message': text_data_json['message']})
+        if channel_name:
+            channel_layer = get_channel_layer()
+            await channel_layer.send(channel_name, {'type': 'display', 'message': text_data_json['message']})
+        else:
+            await self.disconnect()
 
     async def command(self, event):
         # Send message to WebSocket
@@ -109,4 +116,5 @@ class VictimConsumer(AsyncWebsocketConsumer):
         victim = Victim.objects.get(owner=user)
         victim.logged_in = False
         victim.attacker = None
+        victim.channel_name = None
         victim.save()
