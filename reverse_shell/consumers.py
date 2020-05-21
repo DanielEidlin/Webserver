@@ -59,6 +59,7 @@ class AttackerConsumer(AsyncWebsocketConsumer):
         attacker.victim = None
         attacker.channel_name = None
         attacker.save()
+        print(attacker.victim, attacker.channel_name)
 
 
 class VictimConsumer(AsyncWebsocketConsumer):
