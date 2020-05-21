@@ -146,6 +146,7 @@
         webSocket.send(JSON.stringify({
               'message': command
           }));
+        console.log('Sent!');
       }
       index = command_history.length;
       command = '';
